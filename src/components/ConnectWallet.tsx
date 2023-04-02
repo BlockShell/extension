@@ -13,7 +13,7 @@ interface ButtonProps {
     setWallet: Dispatch<SetStateAction<any>>;
     setUserAddress: Dispatch<SetStateAction<string>>;
     setUserBalance: Dispatch<SetStateAction<number>>;
-    setStorage: Dispatch<SetStateAction<MichelsonMap<string, string>>>;
+    setStorage: Dispatch<SetStateAction<MichelsonMap<[string, string], MichelsonMap<string, string>>>>;
     contractAddress: string;
     setBeaconConnection: Dispatch<SetStateAction<boolean>>;
     setPublicToken: Dispatch<SetStateAction<string | null>>;

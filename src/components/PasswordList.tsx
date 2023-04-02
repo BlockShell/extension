@@ -3,7 +3,7 @@ import { MichelsonMap } from "@taquito/taquito";
 import PasswordWrapper from "@components/PasswordWrapper";
 
 interface PasswordListProps {
-    storage: MichelsonMap<string, string>; // address, website, username, password
+    storage: MichelsonMap<[string, string], MichelsonMap<string, string>>; // address, website, username, password
 }
 
 const PasswordList = ({
@@ -12,6 +12,9 @@ const PasswordList = ({
 
     if (!MichelsonMap.isMichelsonMap(storage)) {
         console.log("storage is not a MichelsonMap !!!!!!!!!!");
+        return (
+            <p className="text-center text-neutral-300">No password saved</p>
+        )
     }
     console.log("storage: ", storage);
 
@@ -21,17 +24,12 @@ const PasswordList = ({
         );
     }
     const credentials: Array<[website: string, username: string, password: string]> = [];
-    const entries = storage.entries();
-    let next;
-    while (!(next = entries.next()).done) {
-        const [address, credential] = next.value;
-        const items = credential.split('/');
-        if (items.length !== 3) {
-            console.log("credential is not in the correct format: ", credential, items.length);
-            continue;
-        }
-        credentials.push([items[0], items[1], items[2]]);
-    }
+    storage.forEach((value, key) => {
+        const website = key[1];
+        value.forEach((password, username) => {
+            credentials.push([website, username, password]);
+        });
+    });
 
     if (credentials.length === 0) {
         return (

@@ -15,11 +15,11 @@ const App = () => {
   const [userBalance, setUserBalance] = useState<number>(0);
   const [userBSKey, setUserBSKey] = useState<CryptoKey>(); // BlockShell secret key
   const [userBSPassword, setUserBSPassword] = useState<ArrayBuffer>(new ArrayBuffer(0)); // User BlockShell hashed password
-  const [storage, setStorage] = useState<MichelsonMap<string, string>>(new MichelsonMap());
+  const [storage, setStorage] = useState<MichelsonMap<[string, string], MichelsonMap<string, string>>>(new MichelsonMap());
   const [beaconConnection, setBeaconConnection] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("connect");
   // Ghostnet BlockShell contract
-  const contractAddress: string = "KT1XuggS2Lsgor6nZELaEn7nkQL3513WECWi"; // Random address for now
+  const contractAddress: string = "KT1Gewfc5BBSsD6x75vwCR4xhgXxko9TZtiv"; // Random address for now
 
   if (publicToken && (!userAddress || isNaN(userBalance))) { // When connecting to wallet
     console.log("BlockShell: publicToken -> " + publicToken);
