@@ -48,7 +48,7 @@ const ConnectWallet = ({
             await wallet.requestPermissions({
                 network: {
                     type: NetworkType.GHOSTNET,
-                    rpcUrl: "https://ghostnet.ecadinfra.com",
+                    rpcUrl: "https://rpc.ghostnet.teztnets.xyz",
                 }
             });
             // Get user address

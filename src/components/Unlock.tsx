@@ -27,8 +27,10 @@ const KeyBuilder = ({
     const buildKey = async (): Promise<void> => {
         // First, hash the password using SHA-256
         setUserBSPassword(await crypto.subtle.digest("SHA-256", enc.encode(password)));
+        console.log("Password hashed.");
         // Then, generate a key from the hashed password
         setUserBSKey(await window.crypto.subtle.importKey("raw", userBSPassword, "AES-GCM", false, ["encrypt", "decrypt"]));
+        console.log("Key generated.");
     }
 
     return (

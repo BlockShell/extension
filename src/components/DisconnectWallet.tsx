@@ -24,11 +24,12 @@ const DisconnectWallet = ({
     const disconnectWallet = async (): Promise<void> => {
         if (wallet) {
             await wallet.clearActiveAccount();
+            await wallet.disconnect();
         }
         setUserAddress("");
         setUserBalance(0);
         setWallet(null);
-        const tezosTK = new TezosToolkit("https://ghostnet.ecadinfra.com");
+        const tezosTK = new TezosToolkit("https://rpc.ghostnet.teztnets.xyz");
         setTezos(tezosTK);
         setBeaconConnection(false);
         setPublicToken(null);

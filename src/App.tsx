@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { TezosToolkit, MichelsonMap } from '@taquito/taquito';
 
+import AddCredential from '@components/AddCredential';
 import ConnectWallet from "@components/ConnectWallet";
 import DisconnectWallet from "@components/DisconnectWallet";
 import Unlock from "@components/Unlock";
+import UpdateStorage from "@components/UpdateStorage";
 import PasswordList from "@components/PasswordList";
 
 const App = () => {
@@ -19,7 +21,7 @@ const App = () => {
   const [beaconConnection, setBeaconConnection] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("connect");
   // Ghostnet BlockShell contract
-  const contractAddress: string = "KT1Gewfc5BBSsD6x75vwCR4xhgXxko9TZtiv"; // Random address for now
+  const contractAddress: string = "KT1V2he7sJTjV9rw6gaGzj7BUE73hNaH63wo"; // Random address for now
 
   if (publicToken && (!userAddress || isNaN(userBalance))) { // When connecting to wallet
     console.log("BlockShell: publicToken -> " + publicToken);
@@ -45,15 +47,39 @@ const App = () => {
       console.log("BlockShell: Key set");
       console.log("BlockShell: userBSKey -> " + userBSKey);
       console.log("BlockShell: userBSPassword -> " + Array.from(new Uint8Array(userBSPassword)).map(x => x.toString(16).padStart(2, '0')).join(''));
+      if (activeTab === 'add') {
+        return (
+          <section className="min-w-[400px] min-h-[600px] bg-neutral-900">
+            <div className="flex flex-col gap-4 p-2">
+              <h2 className="text-2xl font-bold text-neutral-300 mb-10">Add credential</h2>
+              <AddCredential
+                contractAddress={contractAddress}
+                setActiveTab={setActiveTab}
+                Tezos={Tezos}
+                userBSKey={userBSKey}
+              />
+            </div>
+          </section>
+        )
+      }
       return (
         <section className="min-w-[400px] min-h-[600px] bg-neutral-900">
           <div className="flex flex-col gap-4 p-2">
             <input className="w-auto h-12 px-4 rounded-lg bg-neutral-800 text-neutral-300 focus:border focus:border-sky-500 focus:outline-none" type="text" placeholder="Rechercher" />
-            <h2 className="text-neutral-400 uppercase">Credentials</h2>
+            <div className="flex flex-row items-center">
+              <h2 className="text-neutral-400 uppercase">Credentials</h2>
+              <div className="grow invisible"></div>
+              <UpdateStorage
+                contract={contract}
+                setStorage={setStorage}
+              />
+            </div>
             <PasswordList
               storage={storage}
+              userAddress={userAddress}
+              userBSKey={userBSKey}
             />
-            <button className="inline-flex items-center justify-center w-auto h-12 px-4 bg-neutral-800 text-neutral-300 hover:bg-neutral-600 focus:outline-none">
+            <button onClick={() => setActiveTab('add')} className="inline-flex items-center justify-center w-auto h-12 px-4 bg-neutral-800 text-neutral-300 hover:bg-neutral-600 focus:outline-none">
             <span>Add a credential</span>
             </button>
             <DisconnectWallet

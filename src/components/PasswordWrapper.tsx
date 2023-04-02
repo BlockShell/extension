@@ -1,27 +1,62 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface WrapperProps {
     website: string;
     username: string;
     password: string;
+    userBSKey: CryptoKey;
 }
 
 const PasswordWrapper = ({
     website,
     username,
     password,
+    userBSKey,
 }: WrapperProps): JSX.Element => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [decryptedWebsite, setDecryptedWebsite] = useState<string>("");
+    const [decryptedUsername, setDecryptedUsername] = useState<string>("");
+    const [decryptedPassword, setDecryptedPassword] = useState<string>("");
+
+
+    const decrypt = async (encrypted: string): Promise<string> => {
+        let len = window.atob(encrypted).length
+        let encryptedBytes = new Uint8Array(len);
+        for (let i=0; i<len; i++) {
+            encryptedBytes[i] = window.atob(encrypted).charCodeAt(i);
+        }
+        return new TextDecoder().decode(await window.crypto.subtle.decrypt(
+            {
+                name: "AES-GCM",
+                iv: new Uint8Array([21, 66, 33, 204, 85, 7, 16, 63, 113, 62, 14, 5]),
+                tagLength: 128,
+            },
+            userBSKey,
+            encryptedBytes
+        ));
+    }
 
     const passwordToggle = (): void => {
         setShowPassword(!showPassword);
     }
 
+    useEffect(() => {
+        decrypt(website).then((decrypted) => {
+            setDecryptedWebsite(decrypted);
+        });
+        decrypt(username).then((decrypted) => {
+            setDecryptedUsername(decrypted);
+        });
+        decrypt(password).then((decrypted) => {
+            setDecryptedPassword(decrypted);
+        });
+    })
+
     return (
         <div className="group flex flex-row items-center gap-1 px-2">
             <button className="flex flex-col flex-grow items-start">
-                <h3 className="text-lg font-bold">{website}</h3>
-                <p className="text-sm">{username} · {showPassword ? password : new Array(password.length+1).join('⏺')}</p>
+                <h3 className="text-lg font-bold">{decryptedWebsite}</h3>
+                <p className="text-sm">{decryptedUsername} · {showPassword ? decryptedPassword : new Array(password.length+1).join('*')}</p>
             </button>
             <button className="inline-flex p-2 rounded-lg hover:bg-neutral-600 text-neutral-300 group-hover:text-sky-500" onClick={passwordToggle}>
                 {showPassword ?
